@@ -140,7 +140,7 @@ async def process_batch_urls(
         logger.exception("Error processing batch URLs")
         # Return error responses for all URLs
         results = [create_error_response(url, e) for url in urls]
-    
+
     return results
 
 
@@ -178,7 +178,7 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
     except Exception as e:
         logger.exception("Error fetching HTML batch")
         standardized_results = [create_error_response(url, e) for url in request.urls]
-    
+
     return standardized_results
 
 
