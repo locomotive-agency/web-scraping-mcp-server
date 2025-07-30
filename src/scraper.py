@@ -125,5 +125,3 @@ class ScrapingService:
             for url in urls
         ]
         return await asyncio.gather(*tasks)
-
-
