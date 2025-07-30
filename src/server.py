@@ -1,6 +1,6 @@
 """Web scraping MCP server using FastMCP and ScrapingBee."""
 
-from typing import Any
+from typing import Any, Callable
 
 from fastmcp import FastMCP
 from loguru import logger
@@ -59,12 +59,12 @@ class UrlRequest(BaseModel):
 
     @field_validator("urls")
     @classmethod
-    def validate_urls(cls, v):
+    def validate_urls(cls, v: list[str]) -> list[str]:
         """Validate URL formats."""
         if v:
             for url in v:
                 if not url.startswith(("http://", "https://")):
-                    raise ValueError(f"URL must start with http:// or https://: {url}")
+                    raise ValueError(f"Invalid URL format: {url}")
         return v
 
 
@@ -94,14 +94,14 @@ def create_error_response(url: str, error: Exception) -> dict[str, Any]:
     }
 
 
-def create_success_response(url: str, data: Any) -> dict[str, Any]:
+def create_success_response(url: str, data: str | dict[str, Any] | list[str] | None) -> dict[str, Any]:
     """Create a standardized success response."""
     return {"url": url, "success": True, "data": data, "error": None}
 
 
 async def process_batch_urls(
     urls: list[str],
-    extraction_func,
+    extraction_func: Callable[[str], Any],
     render_js: bool = False,
     user_agent: str | None = None,
     custom_headers: dict[str, str] | None = None,
@@ -125,7 +125,7 @@ async def process_batch_urls(
                     data = extraction_func(result["content"])
                     results.append(create_success_response(url, data))
                 except Exception as e:
-                    logger.error(f"Error extracting data from {url}: {e}")
+                    logger.exception("Error extracting data from URL: %s", url)
                     results.append(create_error_response(url, e))
             else:
                 # Create error from the scraping failure
@@ -136,7 +136,7 @@ async def process_batch_urls(
         return results
 
     except Exception as e:
-        logger.error(f"Error processing batch URLs: {e}")
+        logger.exception("Error processing batch URLs")
         # Return error responses for all URLs
         return [create_error_response(url, e) for url in urls]
 
@@ -175,7 +175,7 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
         return standardized_results
 
     except Exception as e:
-        logger.error(f"Error fetching HTML batch: {e}")
+        logger.exception("Error fetching HTML batch")
         return [create_error_response(url, e) for url in request.urls]
 
 
