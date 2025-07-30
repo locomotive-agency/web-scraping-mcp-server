@@ -19,15 +19,6 @@ from scraper import scraping_service
 from scrapingbee.exceptions import ScrapingBeeError
 from settings import settings
 
-
-# Configure logging
-logger.remove()
-logger.add(
-    sink=lambda msg: print(msg, end=""),
-    level=settings.log_level,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-)
-
 # Initialize FastMCP server
 mcp = FastMCP("Web Scraping Server")
 
