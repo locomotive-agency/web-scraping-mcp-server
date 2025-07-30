@@ -97,7 +97,7 @@ async def process_batch_urls(
     extraction_func: Annotated[
         Callable[[str], Any] | None, "Function to extract data from HTML"
     ] = None,
-    render_js: Annotated[bool, "Whether to render JavaScript"] = False,
+    render_js: Annotated[bool, "Whether to render JavaScript"] = True,
     user_agent: Annotated[str | None, "Custom user agent string"] = None,
     custom_headers: Annotated[
         dict[str, str] | None, "Additional headers to send"
