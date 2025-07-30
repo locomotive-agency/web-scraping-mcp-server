@@ -8,8 +8,11 @@ from loguru import logger
 from pydantic import BaseModel, Field, field_validator
 
 import extractors
+import logconfig
 from scraper import ScrapingService
 from scrapingbee.exceptions import ScrapingBeeError
+
+logconfig.setup()
 
 # Initialize FastMCP server
 mcp = FastMCP("Web Scraping Server")
