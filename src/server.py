@@ -5,7 +5,7 @@ from typing import Annotated, Any
 
 from fastmcp import FastMCP
 from loguru import logger
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, HttpUrl
 
 import extractors
 import logconfig
@@ -29,7 +29,7 @@ class ErrorDetail(BaseModel):
 class ScrapeResponse(BaseModel):
     """Response model for scraping operations."""
 
-    url: Annotated[str, Field(description="The URL that was processed")]
+    url: Annotated[HttpUrl, Field(description="The URL that was processed")]
     success: Annotated[bool, Field(description="Whether the operation succeeded")]
     data: Annotated[
         str | dict[str, Any] | list[str] | None,
@@ -46,7 +46,7 @@ class UrlRequest(BaseModel):
     """Request model for URL operations."""
 
     urls: Annotated[
-        list[str], Field(min_length=1, description="List of URLs to process")
+        list[HttpUrl], Field(min_length=1, description="List of URLs to process")
     ]
     render_js: Annotated[bool, Field(description="Whether to render JavaScript")] = (
         False
@@ -57,16 +57,6 @@ class UrlRequest(BaseModel):
     custom_headers: Annotated[
         dict[str, str] | None, Field(description="Additional headers to send")
     ] = None
-
-    @field_validator("urls")
-    @classmethod
-    def validate_urls(cls, v: list[str]) -> list[str]:
-        """Validate URL formats."""
-        if v:
-            for url in v:
-                if not url.startswith(("http://", "https://")):
-                    raise ValueError("Invalid URL format")  # noqa: TRY003
-        return v
 
 
 def create_error_response(
