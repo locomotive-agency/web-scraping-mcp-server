@@ -1,7 +1,7 @@
 [project]
-name = "python-template"
+name = "web-scraping-mcp-server"
 version = "0.1.0"
-description = "A Python template for new projects"
+description = "A web scraping service with HTML extraction tools using ScrapingBee API and FastMCP"
 authors = [{ name = "Joe Joiner", email = "2454320+joejoinerr@users.noreply.github.com" }]
 requires-python = ">= 3.12"
 dependencies = [
