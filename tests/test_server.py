@@ -1,7 +1,11 @@
 """Tests for the MCP server."""
 
 import pytest
-from src.server import FlexibleUrlRequest, create_error_response, create_success_response
+from src.server import (
+    FlexibleUrlRequest,
+    create_error_response,
+    create_success_response,
+)
 
 
 class TestServerModels:
@@ -42,7 +46,7 @@ class TestServerModels:
             "url": "https://example.com",
             "success": True,
             "data": "test data",
-            "error": None
+            "error": None,
         }
         assert response == expected
 

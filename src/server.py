@@ -65,7 +65,7 @@ class UrlRequest(BaseModel):
         if v:
             for url in v:
                 if not url.startswith(("http://", "https://")):
-                    raise ValueError("Invalid URL format")
+                    raise ValueError("Invalid URL format")  # noqa: TRY003
         return v
 
 

@@ -1,7 +1,6 @@
 """Scraping service using ScrapingBee."""
 
-import asyncio
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 from loguru import logger
 
@@ -11,7 +10,6 @@ try:
     from .settings import settings
 except ImportError:
     from scrapingbee import ScrapingBeeClient
-    from scrapingbee.exceptions import ScrapingBeeError
     from settings import settings
 
 
@@ -20,7 +18,7 @@ class ScrapingService:
 
     def __init__(self):
         """Initialize the scraping service."""
-        self._client: Optional[ScrapingBeeClient] = None
+        self._client: ScrapingBeeClient | None = None
 
     async def _get_client(self) -> ScrapingBeeClient:
         """Get or create the ScrapingBee client."""
@@ -45,29 +43,29 @@ class ScrapingService:
         self,
         url: str,
         render_js: bool = False,
-        user_agent: Optional[str] = None,
-        custom_headers: Optional[Dict[str, str]] = None,
+        user_agent: str | None = None,
+        custom_headers: dict[str, str] | None = None,
     ) -> str:
         """Fetch HTML content from a single URL.
-        
+
         Args:
             url: URL to scrape
             render_js: Whether to render JavaScript
             user_agent: Custom user agent string
             custom_headers: Additional headers to send
-            
+
         Returns:
             HTML content as string
-            
+
         Raises:
             ScrapingBeeError: If the request fails
         """
         client = await self._get_client()
-        
+
         # Use default user agent if none provided
         if user_agent is None:
             user_agent = settings.default_user_agent
-        
+
         logger.info(f"Fetching HTML from: {url}")
         return await client.get(
             url=url,
@@ -78,28 +76,28 @@ class ScrapingService:
 
     async def fetch_html_batch(
         self,
-        urls: List[str],
+        urls: list[str],
         render_js: bool = False,
-        user_agent: Optional[str] = None,
-        custom_headers: Optional[Dict[str, str]] = None,
-    ) -> List[Dict[str, Any]]:
+        user_agent: str | None = None,
+        custom_headers: dict[str, str] | None = None,
+    ) -> list[dict[str, Any]]:
         """Fetch HTML content from multiple URLs concurrently.
-        
+
         Args:
             urls: List of URLs to scrape
             render_js: Whether to render JavaScript
             user_agent: Custom user agent string
             custom_headers: Additional headers to send
-            
+
         Returns:
             List of results with 'url', 'success', 'content', and 'error' keys
         """
         client = await self._get_client()
-        
+
         # Use default user agent if none provided
         if user_agent is None:
             user_agent = settings.default_user_agent
-        
+
         logger.info(f"Fetching HTML from {len(urls)} URLs")
         return await client.get_batch(
             urls=urls,

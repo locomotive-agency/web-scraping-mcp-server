@@ -1,13 +1,12 @@
 """Tests for HTML extraction functions."""
 
-import pytest
 from src.extractors import (
-    extract_page_title,
-    extract_meta_description,
-    extract_open_graph_metadata,
     extract_h1_headers,
     extract_h2_headers,
     extract_h3_headers,
+    extract_meta_description,
+    extract_open_graph_metadata,
+    extract_page_title,
 )
 
 
@@ -40,7 +39,7 @@ class TestExtractors:
 
     def test_extract_open_graph_metadata(self):
         """Test Open Graph metadata extraction."""
-        html = '''
+        html = """
         <html>
         <head>
             <meta property="og:title" content="OG Title">
@@ -49,18 +48,18 @@ class TestExtractors:
         </head>
         <body></body>
         </html>
-        '''
+        """
         result = extract_open_graph_metadata(html)
         expected = {
             "title": "OG Title",
             "description": "OG Description",
-            "image": "https://example.com/image.jpg"
+            "image": "https://example.com/image.jpg",
         }
         assert result == expected
 
     def test_extract_h1_headers(self):
         """Test H1 header extraction."""
-        html = '''
+        html = """
         <html>
         <body>
             <h1>First Header</h1>
@@ -68,13 +67,13 @@ class TestExtractors:
             <h2>Not H1</h2>
         </body>
         </html>
-        '''
+        """
         result = extract_h1_headers(html)
         assert result == ["First Header", "Second Header"]
 
     def test_extract_h2_headers(self):
         """Test H2 header extraction."""
-        html = '''
+        html = """
         <html>
         <body>
             <h1>Not H2</h1>
@@ -82,13 +81,13 @@ class TestExtractors:
             <h2>Second H2</h2>
         </body>
         </html>
-        '''
+        """
         result = extract_h2_headers(html)
         assert result == ["First H2", "Second H2"]
 
     def test_extract_h3_headers(self):
         """Test H3 header extraction."""
-        html = '''
+        html = """
         <html>
         <body>
             <h1>Not H3</h1>
@@ -96,7 +95,7 @@ class TestExtractors:
             <h3>Second H3</h3>
         </body>
         </html>
-        '''
+        """
         result = extract_h3_headers(html)
         assert result == ["First H3", "Second H3"]
 
