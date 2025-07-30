@@ -4,12 +4,8 @@ from typing import Any
 
 from loguru import logger
 
-try:
-    from .scrapingbee import ScrapingBeeClient
-    from .settings import settings
-except ImportError:
-    from scrapingbee import ScrapingBeeClient
-    from settings import settings
+from scrapingbee import ScrapingBeeClient
+from settings import settings
 
 
 class ScrapingService:

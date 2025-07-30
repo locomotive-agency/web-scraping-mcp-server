@@ -7,32 +7,17 @@ from fastmcp import FastMCP
 from loguru import logger
 from pydantic import BaseModel, Field, field_validator
 
-try:
-    # Try relative imports first (when used as module)
-    from .extractors import (
-        extract_h1_headers,
-        extract_h2_headers,
-        extract_h3_headers,
-        extract_meta_description,
-        extract_open_graph_metadata,
-        extract_page_title,
-    )
-    from .scraper import scraping_service
-    from .scrapingbee.exceptions import ScrapingBeeError
-    from .settings import settings
-except ImportError:
-    # Fall back to absolute imports (when run as script)
-    from extractors import (
-        extract_h1_headers,
-        extract_h2_headers,
-        extract_h3_headers,
-        extract_meta_description,
-        extract_open_graph_metadata,
-        extract_page_title,
-    )
-    from scraper import scraping_service
-    from scrapingbee.exceptions import ScrapingBeeError
-    from settings import settings
+from extractors import (
+    extract_h1_headers,
+    extract_h2_headers,
+    extract_h3_headers,
+    extract_meta_description,
+    extract_open_graph_metadata,
+    extract_page_title,
+)
+from scraper import scraping_service
+from scrapingbee.exceptions import ScrapingBeeError
+from settings import settings
 
 
 # Configure logging
