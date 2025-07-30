@@ -25,7 +25,7 @@ async def example_single_url() -> None:
         return
 
     request = UrlRequest(
-        url="https://example.com",
+        urls=["https://example.com"],
         render_js=False,
         user_agent="Mozilla/5.0 (Web Scraping MCP Server)",
     )
