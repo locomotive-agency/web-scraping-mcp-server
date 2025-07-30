@@ -17,14 +17,15 @@ class ScrapingService:
 
     async def _get_client(self) -> ScrapingBeeClient:
         """Get or create the ScrapingBee client."""
-        if self._client is None:
-            if not settings.scrapingbee_api_key:
-                msg = "SCRAPINGBEE_API_KEY is required. Please set it as an environment variable."
-                raise ValueError(msg)
-            self._client = ScrapingBeeClient(
-                api_key=settings.scrapingbee_api_key,
-                concurrency=settings.default_concurrency,
-            )
+        if isinstance(self._client, ScrapingBeeClient):
+            return self._client
+        if not settings.scrapingbee_api_key:
+            msg = "SCRAPINGBEE_API_KEY is required. Please set it as an environment variable."
+            raise ValueError(msg)
+        self._client = ScrapingBeeClient(
+            api_key=settings.scrapingbee_api_key,
+            concurrency=settings.default_concurrency,
+        )
         return self._client
 
     async def close(self) -> None:
@@ -32,41 +33,6 @@ class ScrapingService:
         if self._client:
             await self._client.close()
             self._client = None
-
-    async def fetch_html(
-        self,
-        url: str,
-        render_js: bool = False,
-        user_agent: str | None = None,
-        custom_headers: dict[str, str] | None = None,
-    ) -> str:
-        """Fetch HTML content from a single URL.
-
-        Args:
-            url: URL to scrape
-            render_js: Whether to render JavaScript
-            user_agent: Custom user agent string
-            custom_headers: Additional headers to send
-
-        Returns:
-            HTML content as string
-
-        Raises:
-            ScrapingBeeError: If the request fails
-        """
-        client = await self._get_client()
-
-        # Use default user agent if none provided
-        if user_agent is None:
-            user_agent = settings.default_user_agent
-
-        logger.info("Fetching HTML from: {}", url)
-        return await client.get(
-            url=url,
-            render_js=render_js,
-            user_agent=user_agent,
-            custom_headers=custom_headers,
-        )
 
     async def fetch_html_batch(
         self,
