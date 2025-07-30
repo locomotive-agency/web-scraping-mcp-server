@@ -107,7 +107,13 @@ class ScrapingService:
 
         # Execute all requests concurrently
         tasks = [
-            self._fetch_single_url(client, url, render_js, user_agent, custom_headers)
+            self._fetch_single_url(
+                client=client,
+                url=url,
+                render_js=render_js,
+                user_agent=user_agent,
+                custom_headers=custom_headers,
+            )
             for url in urls
         ]
         return await asyncio.gather(*tasks)
