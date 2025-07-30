@@ -51,7 +51,7 @@ cp .env.example .env
 
 ```bash
 export SCRAPINGBEE_API_KEY='your-api-key-here'
-uv run python run_server.py
+uv run web-scraping-mcp-server
 ```
 
 The server runs using STDIO transport for MCP protocol compatibility.
