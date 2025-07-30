@@ -98,23 +98,24 @@ async def process_batch_urls(
         # Process each result
         for result in batch_results:
             url = result["url"]
-            if result["success"]:
-                try:
-                    if extraction_func is None:
-                        # Return raw HTML content
-                        data = result["content"]
-                    else:
-                        # Apply extraction function
-                        data = extraction_func(result["content"])
-                    results.append(create_success_response(url, data))
-                except Exception as e:
-                    logger.exception("Error extracting data from URL: {}", url)
-                    results.append(create_error_response(url, e))
-            else:
+            if not result["success"]:
                 # Create error from the scraping failure
                 error_msg = result.get("error", "Unknown scraping error")
                 error = Exception(error_msg)
                 results.append(create_error_response(url, error))
+                continue
+
+            try:
+                if extraction_func is None:
+                    # Return raw HTML content
+                    data = result["content"]
+                else:
+                    # Apply extraction function
+                    data = extraction_func(result["content"])
+                results.append(create_success_response(url, data))
+            except Exception as e:
+                logger.exception("Error extracting data from URL: {}", url)
+                results.append(create_error_response(url, e))
 
     except Exception as e:
         logger.exception("Error processing batch URLs")
@@ -137,7 +138,6 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
     """
     return await process_batch_urls(
         request.urls,
-        extraction_func=None,
         render_js=request.render_js,
         user_agent=request.user_agent,
         custom_headers=request.custom_headers,
