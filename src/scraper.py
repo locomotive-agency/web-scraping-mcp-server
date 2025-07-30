@@ -6,7 +6,6 @@ from loguru import logger
 
 try:
     from .scrapingbee import ScrapingBeeClient
-    from .scrapingbee.exceptions import ScrapingBeeError
     from .settings import settings
 except ImportError:
     from scrapingbee import ScrapingBeeClient
@@ -16,7 +15,7 @@ except ImportError:
 class ScrapingService:
     """Service for scraping HTML content using ScrapingBee."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the scraping service."""
         self._client: ScrapingBeeClient | None = None
 
@@ -24,9 +23,8 @@ class ScrapingService:
         """Get or create the ScrapingBee client."""
         if self._client is None:
             if not settings.scrapingbee_api_key:
-                raise ValueError(
-                    "SCRAPINGBEE_API_KEY is required. Please set it as an environment variable."
-                )
+                msg = "SCRAPINGBEE_API_KEY is required. Please set it as an environment variable."
+                raise ValueError(msg)
             self._client = ScrapingBeeClient(
                 api_key=settings.scrapingbee_api_key,
                 concurrency=settings.default_concurrency,
@@ -66,7 +64,7 @@ class ScrapingService:
         if user_agent is None:
             user_agent = settings.default_user_agent
 
-        logger.info(f"Fetching HTML from: {url}")
+        logger.info("Fetching HTML from: {}", url)
         return await client.get(
             url=url,
             render_js=render_js,
@@ -98,7 +96,7 @@ class ScrapingService:
         if user_agent is None:
             user_agent = settings.default_user_agent
 
-        logger.info(f"Fetching HTML from {len(urls)} URLs")
+        logger.info("Fetching HTML from {} URLs", len(urls))
         return await client.get_batch(
             urls=urls,
             render_js=render_js,

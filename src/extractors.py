@@ -20,9 +20,10 @@ def extract_page_title(html: str) -> str | None:
         title_tag = soup.find("title")
         if title_tag and title_tag.string:
             return title_tag.string.strip()
+    except Exception:
+        logger.exception("Error extracting page title")
         return None
-    except Exception as e:
-        logger.error(f"Error extracting page title: {e}")
+    else:
         return None
 
 
@@ -40,9 +41,10 @@ def extract_meta_description(html: str) -> str | None:
         meta_desc = soup.find("meta", attrs={"name": "description"})
         if meta_desc and meta_desc.get("content"):
             return meta_desc["content"].strip()
+    except Exception:
+        logger.exception("Error extracting meta description")
         return None
-    except Exception as e:
-        logger.error(f"Error extracting meta description: {e}")
+    else:
         return None
 
 
@@ -70,10 +72,11 @@ def extract_open_graph_metadata(html: str) -> dict[str, Any]:
             if property_name and content:
                 og_data[property_name] = content
 
-        return og_data
-    except Exception as e:
-        logger.error(f"Error extracting Open Graph metadata: {e}")
+    except Exception:
+        logger.exception("Error extracting Open Graph metadata")
         return {}
+    else:
+        return og_data
 
 
 def extract_h1_headers(html: str) -> list[str]:
@@ -95,10 +98,11 @@ def extract_h1_headers(html: str) -> list[str]:
             if text:
                 headers.append(text)
 
-        return headers
-    except Exception as e:
-        logger.error(f"Error extracting H1 headers: {e}")
+    except Exception:
+        logger.exception("Error extracting H1 headers")
         return []
+    else:
+        return headers
 
 
 def extract_h2_headers(html: str) -> list[str]:
@@ -120,10 +124,11 @@ def extract_h2_headers(html: str) -> list[str]:
             if text:
                 headers.append(text)
 
-        return headers
-    except Exception as e:
-        logger.error(f"Error extracting H2 headers: {e}")
+    except Exception:
+        logger.exception("Error extracting H2 headers")
         return []
+    else:
+        return headers
 
 
 def extract_h3_headers(html: str) -> list[str]:
@@ -145,10 +150,11 @@ def extract_h3_headers(html: str) -> list[str]:
             if text:
                 headers.append(text)
 
-        return headers
-    except Exception as e:
-        logger.error(f"Error extracting H3 headers: {e}")
+    except Exception:
+        logger.exception("Error extracting H3 headers")
         return []
+    else:
+        return headers
 
 
 def extract_all_headers(html: str) -> dict[str, list[str]]:
@@ -176,10 +182,11 @@ def extract_all_headers(html: str) -> dict[str, list[str]]:
 
             headers[tag_name] = header_texts
 
-        return headers
-    except Exception as e:
-        logger.error(f"Error extracting all headers: {e}")
+    except Exception:
+        logger.exception("Error extracting all headers")
         return {}
+    else:
+        return headers
 
 
 def extract_links(html: str) -> list[dict[str, str]]:
@@ -201,10 +208,11 @@ def extract_links(html: str) -> list[dict[str, str]]:
             if url:
                 links.append({"url": url, "text": text or ""})
 
-        return links
-    except Exception as e:
-        logger.error(f"Error extracting links: {e}")
+    except Exception:
+        logger.exception("Error extracting links")
         return []
+    else:
+        return links
 
 
 def extract_images(html: str) -> list[dict[str, str]]:
@@ -228,7 +236,8 @@ def extract_images(html: str) -> list[dict[str, str]]:
             if src:
                 images.append({"src": src, "alt": alt, "title": title})
 
-        return images
-    except Exception as e:
-        logger.error(f"Error extracting images: {e}")
+    except Exception:
+        logger.exception("Error extracting images")
         return []
+    else:
+        return images

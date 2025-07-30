@@ -14,7 +14,7 @@ from src.server import (
 )
 
 
-async def example_single_url():
+async def example_single_url() -> None:
     """Example of scraping a single URL."""
     print("🔍 Example: Single URL scraping")
     print("=" * 50)
@@ -55,7 +55,7 @@ async def example_single_url():
         print(f"❌ Error: {e}")
 
 
-async def example_batch_urls():
+async def example_batch_urls() -> None:
     """Example of scraping multiple URLs."""
     print("\n🔍 Example: Batch URL scraping")
     print("=" * 50)
@@ -86,7 +86,7 @@ async def example_batch_urls():
         print(f"❌ Error: {e}")
 
 
-def show_tool_info():
+def show_tool_info() -> None:
     """Show information about available tools."""
     print("🛠️  Available MCP Tools")
     print("=" * 50)
@@ -112,7 +112,7 @@ def show_tool_info():
     print("   • Optional parameters: render_js, user_agent, custom_headers")
 
 
-async def main():
+async def main() -> None:
     """Run examples."""
     show_tool_info()
     await example_single_url()

@@ -52,8 +52,8 @@ class ScrapingBeeClient:
         """Initializes the client."""
         try:
             self.api_key = api_key or os.environ["SCRAPINGBEE_API_KEY"]
-        except KeyError:
-            raise MissingKeyError()
+        except KeyError as e:
+            raise MissingKeyError() from e
         concurrency = max(concurrency, 1)
         limits = httpx.Limits(
             max_keepalive_connections=concurrency, max_connections=concurrency
