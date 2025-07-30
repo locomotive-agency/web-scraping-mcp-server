@@ -1,7 +1,7 @@
 """Web scraping MCP server using FastMCP and ScrapingBee."""
 
 from collections.abc import Callable
-from typing import Any
+from typing import Annotated, Any
 
 from fastmcp import FastMCP
 from loguru import logger
@@ -19,12 +19,10 @@ mcp = FastMCP("Web Scraping Server")
 class UrlRequest(BaseModel):
     """Request model for URL operations."""
 
-    urls: list[str] = Field(..., min_length=1, description="List of URLs to process")
-    render_js: bool = Field(default=False, description="Whether to render JavaScript")
-    user_agent: str | None = Field(None, description="Custom user agent string")
-    custom_headers: dict[str, str] | None = Field(
-        None, description="Additional headers to send"
-    )
+    urls: Annotated[list[str], Field(min_length=1, description="List of URLs to process")]
+    render_js: Annotated[bool, Field(description="Whether to render JavaScript")] = False
+    user_agent: Annotated[str | None, Field(description="Custom user agent string")] = None
+    custom_headers: Annotated[dict[str, str] | None, Field(description="Additional headers to send")] = None
 
     @field_validator("urls")
     @classmethod
