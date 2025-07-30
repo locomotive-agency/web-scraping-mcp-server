@@ -64,7 +64,6 @@ All tools accept either single URL or batch URL requests:
 ```json
 {
   "url": "https://example.com",
-  "render_js": false,
   "user_agent": "Custom User Agent"
 }
 ```
@@ -73,7 +72,6 @@ All tools accept either single URL or batch URL requests:
 ```json
 {
   "urls": ["https://example.com", "https://test.com"],
-  "render_js": false,
   "user_agent": "Custom User Agent"
 }
 ```
