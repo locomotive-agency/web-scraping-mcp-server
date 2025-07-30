@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     ] = 90.0
 
     # Logging configuration
-    log_level: Annotated[str, Field(description="Logging level")] = "INFO"
+    log_level: Annotated[str, Field(description="Logging level")] = "DEBUG"
 
     # User agent configuration
     default_user_agent: Annotated[
