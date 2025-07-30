@@ -65,7 +65,7 @@ class UrlRequest(BaseModel):
         if v:
             for url in v:
                 if not url.startswith(("http://", "https://")):
-                    raise ValueError(f"Invalid URL format: {url}")
+                    raise ValueError("Invalid URL format")
         return v
 
 
@@ -110,6 +110,7 @@ async def process_batch_urls(
     custom_headers: dict[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     """Process multiple URLs with the given extraction function."""
+    results = []
     try:
         # Fetch HTML content for all URLs
         batch_results = await scraping_service.fetch_html_batch(
@@ -120,7 +121,6 @@ async def process_batch_urls(
         )
 
         # Process each result
-        results = []
         for result in batch_results:
             url = result["url"]
             if result["success"]:
@@ -136,12 +136,12 @@ async def process_batch_urls(
                 error = Exception(error_msg)
                 results.append(create_error_response(url, error))
 
-        return results
-
     except Exception as e:
         logger.exception("Error processing batch URLs")
         # Return error responses for all URLs
-        return [create_error_response(url, e) for url in urls]
+        results = [create_error_response(url, e) for url in urls]
+    
+    return results
 
 
 # MCP Tools
@@ -155,6 +155,7 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
     Returns:
         List of result dicts with HTML content
     """
+    standardized_results = []
     try:
         results = await scraping_service.fetch_html_batch(
             urls=request.urls,
@@ -164,7 +165,6 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
         )
 
         # Convert to standardized format
-        standardized_results = []
         for result in results:
             url = result["url"]
             if result["success"]:
@@ -175,11 +175,11 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
                 error = Exception(result.get("error", "Unknown error"))
                 standardized_results.append(create_error_response(url, error))
 
-        return standardized_results
-
     except Exception as e:
         logger.exception("Error fetching HTML batch")
-        return [create_error_response(url, e) for url in request.urls]
+        standardized_results = [create_error_response(url, e) for url in request.urls]
+    
+    return standardized_results
 
 
 @mcp.tool()
