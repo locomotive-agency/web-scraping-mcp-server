@@ -8,7 +8,7 @@ from loguru import logger
 from pydantic import BaseModel, Field, field_validator
 
 import extractors
-from scraper import scraping_service
+from scraper import ScrapingService
 from scrapingbee.exceptions import ScrapingBeeError
 
 # Initialize FastMCP server
@@ -87,12 +87,13 @@ async def process_batch_urls(
     results = []
     try:
         # Fetch HTML content for all URLs
-        batch_results = await scraping_service.fetch_html_batch(
-            urls=urls,
-            render_js=render_js,
-            user_agent=user_agent,
-            custom_headers=custom_headers,
-        )
+        async with ScrapingService() as scraping_service:
+            batch_results = await scraping_service.fetch_html_batch(
+                urls=urls,
+                render_js=render_js,
+                user_agent=user_agent,
+                custom_headers=custom_headers,
+            )
 
         # Process each result
         for result in batch_results:
@@ -131,12 +132,13 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
     """
     standardized_results = []
     try:
-        results = await scraping_service.fetch_html_batch(
-            urls=request.urls,
-            render_js=request.render_js,
-            user_agent=request.user_agent,
-            custom_headers=request.custom_headers,
-        )
+        async with ScrapingService() as scraping_service:
+            results = await scraping_service.fetch_html_batch(
+                urls=request.urls,
+                render_js=request.render_js,
+                user_agent=request.user_agent,
+                custom_headers=request.custom_headers,
+            )
 
         # Convert to standardized format
         for result in results:
@@ -268,9 +270,6 @@ async def extract_h3_headers(request: UrlRequest) -> list[dict[str, Any]]:
         request.user_agent,
         request.custom_headers,
     )
-
-
-# Cleanup will be handled by the scraping service's context manager
 
 
 if __name__ == "__main__":

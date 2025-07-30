@@ -17,6 +17,14 @@ class ScrapingService:
         """Initialize the scraping service."""
         self._client: ScrapingBeeClient | None = None
 
+    async def __aenter__(self):
+        """Async context manager entry."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Async context manager exit with cleanup."""
+        await self.close()
+
     async def _get_client(self) -> ScrapingBeeClient:
         """Get or create the ScrapingBee client."""
         if isinstance(self._client, ScrapingBeeClient):
@@ -119,5 +127,3 @@ class ScrapingService:
         return await asyncio.gather(*tasks)
 
 
-# Global scraping service instance
-scraping_service = ScrapingService()
