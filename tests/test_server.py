@@ -1,7 +1,7 @@
 """Tests for the MCP server."""
 
 import pytest
-from src.server import (
+from web_scraping_mcp_server import (
     FlexibleUrlRequest,
     create_error_response,
     create_success_response,

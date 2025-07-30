@@ -6,9 +6,9 @@ from typing import Any, Self
 
 from loguru import logger
 
-from scrapingbee import ScrapingBeeClient
-from scrapingbee.exceptions import ScrapingBeeError
-from settings import settings
+from .scrapingbee import ScrapingBeeClient
+from .scrapingbee.exceptions import ScrapingBeeError
+from .settings import settings
 
 
 class ScrapingService:
@@ -63,11 +63,13 @@ class ScrapingService:
             params = {}
             if render_js:
                 params["render_js"] = render_js
-            if user_agent:
-                params["premium_proxy"] = True
-                params["custom_google"] = True
             if custom_headers:
                 params["headers"] = custom_headers
+            if user_agent:
+                if params.get("headers"):
+                    params["headers"]["User-Agent"] = user_agent
+                else:
+                    params["headers"] = {"User-Agent": user_agent}
 
             response = await client.get(url=url, **params)
             return {

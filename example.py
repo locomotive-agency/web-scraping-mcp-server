@@ -4,7 +4,7 @@ import asyncio
 import json
 import os
 
-from src.server import (
+from web_scraping_mcp_server import (
     UrlRequest,
     extract_h1_headers,
     extract_meta_description,

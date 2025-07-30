@@ -7,10 +7,9 @@ from fastmcp import FastMCP
 from loguru import logger
 from pydantic import BaseModel, Field, HttpUrl
 
-import extractors
-import logconfig
-from scraper import ScrapingService
-from scrapingbee.exceptions import ScrapingBeeError
+from . import extractors, logconfig
+from .scraper import ScrapingService
+from .scrapingbee.exceptions import ScrapingBeeError
 
 logconfig.setup()
 
@@ -277,9 +276,3 @@ async def extract_h3_headers(request: UrlRequest) -> list[ScrapeResponse]:
         request.user_agent,
         request.custom_headers,
     )
-
-
-if __name__ == "__main__":
-    logger.info("Starting web scraping MCP server...")
-    # FastMCP runs as stdio by default for MCP protocol
-    mcp.run()

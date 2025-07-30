@@ -1,6 +1,6 @@
 """Tests for HTML extraction functions."""
 
-from src.extractors import (
+from web_scraping_mcp_server import (
     extract_h1_headers,
     extract_h2_headers,
     extract_h3_headers,
