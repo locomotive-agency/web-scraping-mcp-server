@@ -22,7 +22,7 @@ A Model Context Protocol (MCP) server for web scraping using ScrapingBee API wit
 
 ## Requirements
 
-- Python 3.11+
+- Python 3.12+
 - ScrapingBee API key
 - FastMCP 2.10.6+
 
