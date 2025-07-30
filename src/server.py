@@ -97,9 +97,7 @@ def create_error_response(
 
 def create_success_response(
     url: Annotated[str, "The URL that was processed"],
-    data: Annotated[
-        str | dict[str, Any] | list[str] | None, "The extracted data"
-    ],
+    data: Annotated[str | dict[str, Any] | list[str] | None, "The extracted data"],
 ) -> ScrapeResponse:
     """Create a standardized success response."""
     return ScrapeResponse(url=url, success=True, data=data, error=None)
