@@ -7,17 +7,9 @@ from fastmcp import FastMCP
 from loguru import logger
 from pydantic import BaseModel, Field, field_validator
 
-from extractors import (
-    extract_h1_headers,
-    extract_h2_headers,
-    extract_h3_headers,
-    extract_meta_description,
-    extract_open_graph_metadata,
-    extract_page_title,
-)
+import extractors
 from scraper import scraping_service
 from scrapingbee.exceptions import ScrapingBeeError
-from settings import settings
 
 # Initialize FastMCP server
 mcp = FastMCP("Web Scraping Server")
@@ -104,7 +96,7 @@ async def process_batch_urls(
                     data = extraction_func(result["content"])
                     results.append(create_success_response(url, data))
                 except Exception as e:
-                    logger.exception("Error extracting data from URL: %s", url)
+                    logger.exception("Error extracting data from URL: {}", url)
                     results.append(create_error_response(url, e))
             else:
                 # Create error from the scraping failure
@@ -170,7 +162,7 @@ async def extract_page_title(request: UrlRequest) -> list[dict[str, Any]]:
     """
     return await process_batch_urls(
         request.urls,
-        extract_page_title,
+        extractors.extract_page_title,
         request.render_js,
         request.user_agent,
         request.custom_headers,
@@ -189,7 +181,7 @@ async def extract_meta_description(request: UrlRequest) -> list[dict[str, Any]]:
     """
     return await process_batch_urls(
         request.urls,
-        extract_meta_description,
+        extractors.extract_meta_description,
         request.render_js,
         request.user_agent,
         request.custom_headers,
@@ -208,7 +200,7 @@ async def extract_open_graph_metadata(request: UrlRequest) -> list[dict[str, Any
     """
     return await process_batch_urls(
         request.urls,
-        extract_open_graph_metadata,
+        extractors.extract_open_graph_metadata,
         request.render_js,
         request.user_agent,
         request.custom_headers,
@@ -227,7 +219,7 @@ async def extract_h1_headers(request: UrlRequest) -> list[dict[str, Any]]:
     """
     return await process_batch_urls(
         request.urls,
-        extract_h1_headers,
+        extractors.extract_h1_headers,
         request.render_js,
         request.user_agent,
         request.custom_headers,
@@ -246,7 +238,7 @@ async def extract_h2_headers(request: UrlRequest) -> list[dict[str, Any]]:
     """
     return await process_batch_urls(
         request.urls,
-        extract_h2_headers,
+        extractors.extract_h2_headers,
         request.render_js,
         request.user_agent,
         request.custom_headers,
@@ -265,7 +257,7 @@ async def extract_h3_headers(request: UrlRequest) -> list[dict[str, Any]]:
     """
     return await process_batch_urls(
         request.urls,
-        extract_h3_headers,
+        extractors.extract_h3_headers,
         request.render_js,
         request.user_agent,
         request.custom_headers,
