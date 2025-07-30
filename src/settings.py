@@ -15,41 +15,33 @@ class Settings(BaseSettings):
 
     # ScrapingBee API configuration
     scrapingbee_api_key: Annotated[
-        str, Field(description="ScrapingBee API key", alias="SCRAPINGBEE_API_KEY")
+        str, Field(description="ScrapingBee API key")
     ] = ""
 
     # Server configuration
     server_host: Annotated[
-        str, Field(description="Server host", alias="SERVER_HOST")
+        str, Field(description="Server host")
     ] = "localhost"
     server_port: Annotated[
-        int, Field(description="Server port", alias="SERVER_PORT")
+        int, Field(description="Server port")
     ] = 8000
 
     # Scraping configuration
     default_concurrency: Annotated[
         int,
-        Field(
-            description="Default concurrency for scraping requests",
-            alias="DEFAULT_CONCURRENCY",
-        ),
+        Field(description="Default concurrency for scraping requests"),
     ] = 5
     default_timeout: Annotated[
         float,
-        Field(
-            description="Default timeout for scraping requests in seconds",
-            alias="DEFAULT_TIMEOUT",
-        ),
+        Field(description="Default timeout for scraping requests in seconds"),
     ] = 90.0
 
     # Logging configuration
-    log_level: Annotated[str, Field(description="Logging level", alias="LOG_LEVEL")] = (
-        "INFO"
-    )
+    log_level: Annotated[str, Field(description="Logging level")] = "INFO"
 
     # User agent configuration
     default_user_agent: Annotated[
-        str, Field(description="Default user agent string", alias="DEFAULT_USER_AGENT")
+        str, Field(description="Default user agent string")
     ] = "Mozilla/5.0 (compatible; WebScrapingMCPServer/1.0)"
 
 
