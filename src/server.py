@@ -22,21 +22,23 @@ mcp = FastMCP("Web Scraping Server")
 class ErrorDetail(BaseModel):
     """Error detail information."""
 
-    type: str = Field(description="Error categorization")
-    message: str = Field(description="Human readable error message")
+    type: Annotated[str, Field(description="Error categorization")]
+    message: Annotated[str, Field(description="Human readable error message")]
 
 
 class ScrapeResponse(BaseModel):
     """Response model for scraping operations."""
 
-    url: str = Field(description="The URL that was processed")
-    success: bool = Field(description="Whether the operation succeeded")
-    data: str | dict[str, Any] | list[str] | None = Field(
-        description="The extracted data if successful"
-    )
-    error: ErrorDetail | None = Field(
-        description="Error details if the operation failed"
-    )
+    url: Annotated[str, Field(description="The URL that was processed")]
+    success: Annotated[bool, Field(description="Whether the operation succeeded")]
+    data: Annotated[
+        str | dict[str, Any] | list[str] | None,
+        Field(description="The extracted data if successful"),
+    ]
+    error: Annotated[
+        ErrorDetail | None,
+        Field(description="Error details if the operation failed"),
+    ]
 
 
 # Request models
@@ -67,7 +69,10 @@ class UrlRequest(BaseModel):
         return v
 
 
-def create_error_response(url: str, error: Exception) -> ScrapeResponse:
+def create_error_response(
+    url: Annotated[str, "The URL that was processed"],
+    error: Annotated[Exception, "The exception that occurred"],
+) -> ScrapeResponse:
     """Create a standardized error response."""
     # Categorize the error
     if isinstance(error, ScrapingBeeError):
@@ -91,18 +96,25 @@ def create_error_response(url: str, error: Exception) -> ScrapeResponse:
 
 
 def create_success_response(
-    url: str, data: str | dict[str, Any] | list[str] | None
+    url: Annotated[str, "The URL that was processed"],
+    data: Annotated[
+        str | dict[str, Any] | list[str] | None, "The extracted data"
+    ],
 ) -> ScrapeResponse:
     """Create a standardized success response."""
     return ScrapeResponse(url=url, success=True, data=data, error=None)
 
 
 async def process_batch_urls(
-    urls: list[str],
-    extraction_func: Callable[[str], Any] | None = None,
-    render_js: bool = False,
-    user_agent: str | None = None,
-    custom_headers: dict[str, str] | None = None,
+    urls: Annotated[list[str], "List of URLs to process"],
+    extraction_func: Annotated[
+        Callable[[str], Any] | None, "Function to extract data from HTML"
+    ] = None,
+    render_js: Annotated[bool, "Whether to render JavaScript"] = False,
+    user_agent: Annotated[str | None, "Custom user agent string"] = None,
+    custom_headers: Annotated[
+        dict[str, str] | None, "Additional headers to send"
+    ] = None,
 ) -> list[ScrapeResponse]:
     """Process multiple URLs with the given extraction function."""
     results = []
