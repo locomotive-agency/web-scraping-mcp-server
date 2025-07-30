@@ -18,6 +18,27 @@ logconfig.setup()
 mcp = FastMCP("Web Scraping Server")
 
 
+# Response models
+class ErrorDetail(BaseModel):
+    """Error detail information."""
+    
+    type: str = Field(description="Error categorization")
+    message: str = Field(description="Human readable error message")
+
+
+class ScrapeResponse(BaseModel):
+    """Response model for scraping operations."""
+    
+    url: str = Field(description="The URL that was processed")
+    success: bool = Field(description="Whether the operation succeeded")
+    data: str | dict[str, Any] | list[str] | None = Field(
+        description="The extracted data if successful"
+    )
+    error: ErrorDetail | None = Field(
+        description="Error details if the operation failed"
+    )
+
+
 # Request models
 class UrlRequest(BaseModel):
     """Request model for URL operations."""
@@ -46,7 +67,7 @@ class UrlRequest(BaseModel):
         return v
 
 
-def create_error_response(url: str, error: Exception) -> dict[str, Any]:
+def create_error_response(url: str, error: Exception) -> ScrapeResponse:
     """Create a standardized error response."""
     # Categorize the error
     if isinstance(error, ScrapingBeeError):
@@ -61,22 +82,19 @@ def create_error_response(url: str, error: Exception) -> dict[str, Any]:
     else:
         error_type = "PARSING_ERROR"
 
-    return {
-        "url": url,
-        "success": False,
-        "data": None,
-        "error": {
-            "type": error_type,
-            "message": str(error),
-        },
-    }
+    return ScrapeResponse(
+        url=url,
+        success=False,
+        data=None,
+        error=ErrorDetail(type=error_type, message=str(error)),
+    )
 
 
 def create_success_response(
     url: str, data: str | dict[str, Any] | list[str] | None
-) -> dict[str, Any]:
+) -> ScrapeResponse:
     """Create a standardized success response."""
-    return {"url": url, "success": True, "data": data, "error": None}
+    return ScrapeResponse(url=url, success=True, data=data, error=None)
 
 
 async def process_batch_urls(
@@ -85,7 +103,7 @@ async def process_batch_urls(
     render_js: bool = False,
     user_agent: str | None = None,
     custom_headers: dict[str, str] | None = None,
-) -> list[dict[str, Any]]:
+) -> list[ScrapeResponse]:
     """Process multiple URLs with the given extraction function."""
     results = []
     try:
@@ -130,7 +148,7 @@ async def process_batch_urls(
 
 # MCP Tools
 @mcp.tool()
-async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
+async def fetch_html(request: UrlRequest) -> list[ScrapeResponse]:
     """Fetch raw HTML content from URLs.
 
     Args:
@@ -148,7 +166,7 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
 
 
 @mcp.tool()
-async def extract_page_title(request: UrlRequest) -> list[dict[str, Any]]:
+async def extract_page_title(request: UrlRequest) -> list[ScrapeResponse]:
     """Extract page titles from URLs.
 
     Args:
@@ -167,7 +185,7 @@ async def extract_page_title(request: UrlRequest) -> list[dict[str, Any]]:
 
 
 @mcp.tool()
-async def extract_meta_description(request: UrlRequest) -> list[dict[str, Any]]:
+async def extract_meta_description(request: UrlRequest) -> list[ScrapeResponse]:
     """Extract meta descriptions from URLs.
 
     Args:
@@ -186,7 +204,7 @@ async def extract_meta_description(request: UrlRequest) -> list[dict[str, Any]]:
 
 
 @mcp.tool()
-async def extract_open_graph_metadata(request: UrlRequest) -> list[dict[str, Any]]:
+async def extract_open_graph_metadata(request: UrlRequest) -> list[ScrapeResponse]:
     """Extract Open Graph metadata from URLs.
 
     Args:
@@ -205,7 +223,7 @@ async def extract_open_graph_metadata(request: UrlRequest) -> list[dict[str, Any
 
 
 @mcp.tool()
-async def extract_h1_headers(request: UrlRequest) -> list[dict[str, Any]]:
+async def extract_h1_headers(request: UrlRequest) -> list[ScrapeResponse]:
     """Extract H1 headers from URLs.
 
     Args:
@@ -224,7 +242,7 @@ async def extract_h1_headers(request: UrlRequest) -> list[dict[str, Any]]:
 
 
 @mcp.tool()
-async def extract_h2_headers(request: UrlRequest) -> list[dict[str, Any]]:
+async def extract_h2_headers(request: UrlRequest) -> list[ScrapeResponse]:
     """Extract H2 headers from URLs.
 
     Args:
@@ -243,7 +261,7 @@ async def extract_h2_headers(request: UrlRequest) -> list[dict[str, Any]]:
 
 
 @mcp.tool()
-async def extract_h3_headers(request: UrlRequest) -> list[dict[str, Any]]:
+async def extract_h3_headers(request: UrlRequest) -> list[ScrapeResponse]:
     """Extract H3 headers from URLs.
 
     Args:
