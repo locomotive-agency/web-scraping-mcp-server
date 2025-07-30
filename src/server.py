@@ -21,14 +21,14 @@ mcp = FastMCP("Web Scraping Server")
 # Response models
 class ErrorDetail(BaseModel):
     """Error detail information."""
-    
+
     type: str = Field(description="Error categorization")
     message: str = Field(description="Human readable error message")
 
 
 class ScrapeResponse(BaseModel):
     """Response model for scraping operations."""
-    
+
     url: str = Field(description="The URL that was processed")
     success: bool = Field(description="Whether the operation succeeded")
     data: str | dict[str, Any] | list[str] | None = Field(
