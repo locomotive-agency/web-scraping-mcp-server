@@ -63,7 +63,7 @@ class ScrapingService:
                 "error": None,
             }
         except ScrapingBeeError as e:
-            logger.exception("Failed to scrape {}: {}", url, str(e))
+            logger.exception("Failed to scrape {}", url)
             return {
                 "url": url,
                 "success": False,
@@ -71,7 +71,7 @@ class ScrapingService:
                 "error": str(e),
             }
         except Exception as e:
-            logger.exception("Unexpected error scraping {}: {}", url, str(e))
+            logger.exception("Unexpected error scraping {}", url)
             return {
                 "url": url,
                 "success": False,
