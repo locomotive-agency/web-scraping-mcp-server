@@ -78,7 +78,7 @@ def create_success_response(
 
 async def process_batch_urls(
     urls: list[str],
-    extraction_func: Callable[[str], Any],
+    extraction_func: Callable[[str], Any] | None = None,
     render_js: bool = False,
     user_agent: str | None = None,
     custom_headers: dict[str, str] | None = None,
@@ -100,7 +100,12 @@ async def process_batch_urls(
             url = result["url"]
             if result["success"]:
                 try:
-                    data = extraction_func(result["content"])
+                    if extraction_func is None:
+                        # Return raw HTML content
+                        data = result["content"]
+                    else:
+                        # Apply extraction function
+                        data = extraction_func(result["content"])
                     results.append(create_success_response(url, data))
                 except Exception as e:
                     logger.exception("Error extracting data from URL: {}", url)
@@ -130,32 +135,13 @@ async def fetch_html(request: UrlRequest) -> list[dict[str, Any]]:
     Returns:
         List of result dicts with HTML content
     """
-    standardized_results = []
-    try:
-        async with ScrapingService() as scraping_service:
-            results = await scraping_service.fetch_html_batch(
-                urls=request.urls,
-                render_js=request.render_js,
-                user_agent=request.user_agent,
-                custom_headers=request.custom_headers,
-            )
-
-        # Convert to standardized format
-        for result in results:
-            url = result["url"]
-            if result["success"]:
-                standardized_results.append(
-                    create_success_response(url, result["content"])
-                )
-            else:
-                error = Exception(result.get("error", "Unknown error"))
-                standardized_results.append(create_error_response(url, error))
-
-    except Exception as e:
-        logger.exception("Error fetching HTML batch")
-        standardized_results = [create_error_response(url, e) for url in request.urls]
-
-    return standardized_results
+    return await process_batch_urls(
+        request.urls,
+        extraction_func=None,
+        render_js=request.render_js,
+        user_agent=request.user_agent,
+        custom_headers=request.custom_headers,
+    )
 
 
 @mcp.tool()
