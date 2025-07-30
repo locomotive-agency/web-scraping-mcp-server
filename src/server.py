@@ -1,6 +1,7 @@
 """Web scraping MCP server using FastMCP and ScrapingBee."""
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from fastmcp import FastMCP
 from loguru import logger
@@ -94,7 +95,9 @@ def create_error_response(url: str, error: Exception) -> dict[str, Any]:
     }
 
 
-def create_success_response(url: str, data: str | dict[str, Any] | list[str] | None) -> dict[str, Any]:
+def create_success_response(
+    url: str, data: str | dict[str, Any] | list[str] | None
+) -> dict[str, Any]:
     """Create a standardized success response."""
     return {"url": url, "success": True, "data": data, "error": None}
 
