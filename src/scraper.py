@@ -1,10 +1,12 @@
 """Scraping service using ScrapingBee."""
 
+import asyncio
 from typing import Any
 
 from loguru import logger
 
 from scrapingbee import ScrapingBeeClient
+from scrapingbee.exceptions import ScrapingBeeError
 from settings import settings
 
 
@@ -59,12 +61,46 @@ class ScrapingService:
             user_agent = settings.default_user_agent
 
         logger.info("Fetching HTML from {} URLs", len(urls))
-        return await client.get_batch(
-            urls=urls,
-            render_js=render_js,
-            user_agent=user_agent,
-            custom_headers=custom_headers,
-        )
+
+        async def fetch_single_url(url: str) -> dict[str, Any]:
+            """Fetch a single URL and return standardized result."""
+            try:
+                params = {}
+                if render_js:
+                    params["render_js"] = render_js
+                if user_agent:
+                    params["premium_proxy"] = True
+                    params["custom_google"] = True
+                if custom_headers:
+                    params["headers"] = custom_headers
+
+                response = await client.get(url=url, **params)
+                return {
+                    "url": url,
+                    "success": True,
+                    "content": response.get("body", ""),
+                    "error": None,
+                }
+            except ScrapingBeeError as e:
+                logger.error("Failed to scrape {}: {}", url, str(e))
+                return {
+                    "url": url,
+                    "success": False,
+                    "content": None,
+                    "error": str(e),
+                }
+            except Exception as e:
+                logger.error("Unexpected error scraping {}: {}", url, str(e))
+                return {
+                    "url": url,
+                    "success": False,
+                    "content": None,
+                    "error": f"Unexpected error: {str(e)}",
+                }
+
+        # Execute all requests concurrently
+        tasks = [fetch_single_url(url) for url in urls]
+        return await asyncio.gather(*tasks)
 
 
 # Global scraping service instance
