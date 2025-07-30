@@ -5,7 +5,7 @@ import json
 import os
 
 from src.server import (
-    FlexibleUrlRequest,
+    UrlRequest,
     extract_h1_headers,
     extract_meta_description,
     extract_open_graph_metadata,
@@ -24,7 +24,7 @@ async def example_single_url() -> None:
         print("⚠️  SCRAPINGBEE_API_KEY not set. Skipping live example.")
         return
 
-    request = FlexibleUrlRequest(
+    request = UrlRequest(
         url="https://example.com",
         render_js=False,
         user_agent="Mozilla/5.0 (Web Scraping MCP Server)",
@@ -64,7 +64,7 @@ async def example_batch_urls() -> None:
         print("⚠️  SCRAPINGBEE_API_KEY not set. Skipping live example.")
         return
 
-    request = FlexibleUrlRequest(
+    request = UrlRequest(
         urls=[
             "https://example.com",
             "https://httpbin.org/html",
