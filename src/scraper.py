@@ -36,6 +36,49 @@ class ScrapingService:
             await self._client.close()
             self._client = None
 
+    async def _fetch_single_url(
+        self,
+        client: ScrapingBeeClient,
+        url: str,
+        render_js: bool,
+        user_agent: str | None,
+        custom_headers: dict[str, str] | None,
+    ) -> dict[str, Any]:
+        """Fetch a single URL and return standardized result."""
+        try:
+            params = {}
+            if render_js:
+                params["render_js"] = render_js
+            if user_agent:
+                params["premium_proxy"] = True
+                params["custom_google"] = True
+            if custom_headers:
+                params["headers"] = custom_headers
+
+            response = await client.get(url=url, **params)
+            return {
+                "url": url,
+                "success": True,
+                "content": response.get("body", ""),
+                "error": None,
+            }
+        except ScrapingBeeError as e:
+            logger.exception("Failed to scrape {}: {}", url, str(e))
+            return {
+                "url": url,
+                "success": False,
+                "content": None,
+                "error": str(e),
+            }
+        except Exception as e:
+            logger.exception("Unexpected error scraping {}: {}", url, str(e))
+            return {
+                "url": url,
+                "success": False,
+                "content": None,
+                "error": f"Unexpected error: {str(e)}",
+            }
+
     async def fetch_html_batch(
         self,
         urls: list[str],
@@ -62,44 +105,11 @@ class ScrapingService:
 
         logger.info("Fetching HTML from {} URLs", len(urls))
 
-        async def fetch_single_url(url: str) -> dict[str, Any]:
-            """Fetch a single URL and return standardized result."""
-            try:
-                params = {}
-                if render_js:
-                    params["render_js"] = render_js
-                if user_agent:
-                    params["premium_proxy"] = True
-                    params["custom_google"] = True
-                if custom_headers:
-                    params["headers"] = custom_headers
-
-                response = await client.get(url=url, **params)
-                return {
-                    "url": url,
-                    "success": True,
-                    "content": response.get("body", ""),
-                    "error": None,
-                }
-            except ScrapingBeeError as e:
-                logger.error("Failed to scrape {}: {}", url, str(e))
-                return {
-                    "url": url,
-                    "success": False,
-                    "content": None,
-                    "error": str(e),
-                }
-            except Exception as e:
-                logger.error("Unexpected error scraping {}: {}", url, str(e))
-                return {
-                    "url": url,
-                    "success": False,
-                    "content": None,
-                    "error": f"Unexpected error: {str(e)}",
-                }
-
         # Execute all requests concurrently
-        tasks = [fetch_single_url(url) for url in urls]
+        tasks = [
+            self._fetch_single_url(client, url, render_js, user_agent, custom_headers)
+            for url in urls
+        ]
         return await asyncio.gather(*tasks)
 
 
