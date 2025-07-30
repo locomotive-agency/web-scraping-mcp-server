@@ -14,17 +14,11 @@ class Settings(BaseSettings):
     )
 
     # ScrapingBee API configuration
-    scrapingbee_api_key: Annotated[
-        str, Field(description="ScrapingBee API key")
-    ] = ""
+    scrapingbee_api_key: Annotated[str, Field(description="ScrapingBee API key")] = ""
 
     # Server configuration
-    server_host: Annotated[
-        str, Field(description="Server host")
-    ] = "localhost"
-    server_port: Annotated[
-        int, Field(description="Server port")
-    ] = 8000
+    server_host: Annotated[str, Field(description="Server host")] = "localhost"
+    server_port: Annotated[int, Field(description="Server port")] = 8000
 
     # Scraping configuration
     default_concurrency: Annotated[
