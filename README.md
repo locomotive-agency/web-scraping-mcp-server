@@ -28,6 +28,15 @@ A Model Context Protocol (MCP) server for web scraping using ScrapingBee API wit
 
 ## Installation
 
+### Method 1: UV Tool (Recommended)
+
+Install directly as a UV tool:
+```bash
+uv tool install web-scraping-mcp-server
+```
+
+### Method 2: Development Installation
+
 1. Clone the repository:
 ```bash
 git clone <repository-url>
@@ -49,6 +58,13 @@ cp .env.example .env
 
 ### Starting the Server
 
+#### If installed as UV tool:
+```bash
+export SCRAPINGBEE_API_KEY='your-api-key-here'
+uvx web-scraping-mcp-server
+```
+
+#### If using development installation:
 ```bash
 export SCRAPINGBEE_API_KEY='your-api-key-here'
 uv run web-scraping-mcp-server
@@ -140,6 +156,12 @@ uv run mypy src
 
 ### Example Usage
 
+#### If installed as UV tool:
+```bash
+python example.py
+```
+
+#### If using development installation:
 ```bash
 uv run python example.py
 ```
